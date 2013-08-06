@@ -1,4 +1,4 @@
-package jonathan.geoffroy.androidstrategic.view.utils;
+package jonathan.geoffroy.shooter.view.utils;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;

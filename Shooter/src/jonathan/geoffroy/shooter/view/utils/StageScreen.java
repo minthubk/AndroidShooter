@@ -1,4 +1,4 @@
-package jonathan.geoffroy.androidstrategic.view.utils;
+package jonathan.geoffroy.shooter.view.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;

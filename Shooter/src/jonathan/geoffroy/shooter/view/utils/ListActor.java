@@ -1,4 +1,4 @@
-package jonathan.geoffroy.androidstrategic.view.utils;
+package jonathan.geoffroy.shooter.view.utils;
 
 import java.util.LinkedList;
 

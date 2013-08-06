@@ -1,8 +1,6 @@
-package jonathan.geoffroy.androidstrategic.view.utils;
+package jonathan.geoffroy.shooter.view.utils;
 
 import java.util.ArrayList;
-
-import jonathan.geoffroy.androidstrategic.view.actors.MapActor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -15,17 +13,17 @@ public abstract class HelpScreen implements Screen {
 
 	@Override
 	public void show() {
-		app.loadAssets(getAssetDescriptors());
+		App.loadAssets(getAssetDescriptors());
 	}
 
 	@Override
 	public void resume() {
-		app.loadAssets(getAssetDescriptors());		
+		App.loadAssets(getAssetDescriptors());		
 	}
 
 	@Override
 	public void dispose() {
-		app.clearAssets();
+		App.clearAssets();
 	}
 
 	public abstract ArrayList<AssetDescriptor<Object>> getAssetDescriptors();
@@ -33,14 +31,13 @@ public abstract class HelpScreen implements Screen {
 
 	public static void initialize(App app) {
 		HelpScreen.app = app;
-		MapActor.initializeApp(app);
 		width = Gdx.graphics.getWidth();
 		height = Gdx.graphics.getHeight();
 	}
 
 	@Override
 	public void render(float delta) {
-		if(app.hasLoaded()) {
+		if(App.hasLoaded()) {
 			if(!hasInit) {
 				hasInit = true;
 				onEndLoaded();
