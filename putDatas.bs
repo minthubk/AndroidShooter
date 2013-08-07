@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cp -Rf ./data/* ./Shooter-desktop/bin/data/
+cp -Rf ./data/* ./Shooter-android/assets/data/
