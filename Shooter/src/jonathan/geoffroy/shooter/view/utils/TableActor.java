@@ -30,7 +30,6 @@ public abstract class TableActor extends Actor {
 	public void reloadTable() {
 		table.clear();
 		loadTable();
-		
 	}
 
 	public Table getTable() {

@@ -8,7 +8,7 @@ import com.badlogic.gdx.assets.AssetManager;
 
 public class App extends Game {
 	private static AssetManager manager;
-	private ArrayList<HelpScreen> screens;
+	protected ArrayList<HelpScreen> screens;
 
 	@Override
 	public void create() {
