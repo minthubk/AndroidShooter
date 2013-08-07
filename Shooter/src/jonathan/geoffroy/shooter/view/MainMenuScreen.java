@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class MainMenuScreen extends StageScreen {
 	private final static String WALLPAPER = Shooter.IMAGES + "MainMenu/wallpaper.png", BACKGROUND = Shooter.IMAGES + "MainMenu/background.png";
 	private final static String FONT = Shooter.FONTS + "MainMenu/font.fnt";
+	private final static int NB_MENUS = 4;
 
 	private Texture wallpaper;
 	private Table menu;
@@ -40,7 +41,12 @@ public class MainMenuScreen extends StageScreen {
 
 	@Override
 	protected void onEndLoaded() {
+		float widthMenu = Gdx.graphics.getWidth() * 2 / 3;
+		float heightMenu = (Gdx.graphics.getHeight() / NB_MENUS) * 2 / 3;
+
 		menu = new Table();
+		menu.setSize(Gdx.graphics.getWidth() * 2 / 3, Gdx.graphics.getHeight() * 2 / 3);
+
 		Texture background = (Texture) App.getAsset(BACKGROUND);
 		TextureRegion backgroundRegion = new TextureRegion(background, 256, 42);
 		BitmapFont font = (BitmapFont) App.getAsset(FONT);
@@ -57,7 +63,7 @@ public class MainMenuScreen extends StageScreen {
 				System.out.println("mode niveau");
 			}
 		});
-		menu.add(level);
+		menu.add(level).width(widthMenu).height(heightMenu);
 		menu.row();
 
 		TextButton unlimited = new TextButton("MODE ILLIMITE", style);
@@ -67,7 +73,7 @@ public class MainMenuScreen extends StageScreen {
 				System.out.println("mode illimité");
 			}
 		});
-		menu.add(unlimited);
+		menu.add(unlimited).width(widthMenu).height(heightMenu);;
 		menu.row();
 
 		TextButton options = new TextButton("OPTIONS", style);
@@ -77,7 +83,7 @@ public class MainMenuScreen extends StageScreen {
 				System.out.println("options");
 			}
 		});
-		menu.add(options);
+		menu.add(options).width(widthMenu).height(heightMenu);;
 		menu.row();
 
 		TextButton exit = new TextButton("QUITTER", style);
@@ -87,11 +93,10 @@ public class MainMenuScreen extends StageScreen {
 				Gdx.app.exit();
 			}
 		});
-		menu.add(exit);
+		menu.add(exit).width(widthMenu).height(heightMenu);;
 		menu.row();
 
 		menu.pack();
-		//		menu.setPosition(- menu.getWidth() / 2, - menu.getHeight() / 2);
 		menu.setPosition(Gdx.graphics.getWidth() / 2 - menu.getWidth() / 2, Gdx.graphics.getHeight() / 2 - menu.getHeight() / 2);
 
 		int switcher = 0;
@@ -114,11 +119,4 @@ public class MainMenuScreen extends StageScreen {
 		stage.addActor(new WallpaperActor(wallpaper));
 		stage.addActor(menu);
 	}
-
-	@Override
-	public void draw(float delta) {
-		super.draw(delta);
-	}
-
-
 }
