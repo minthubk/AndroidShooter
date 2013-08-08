@@ -9,6 +9,8 @@ import jonathan.geoffroy.shooter.view.utils.WallpaperActor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -24,10 +26,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class MainMenuScreen extends StageScreen {
 	private final static String WALLPAPER = Shooter.IMAGES + "MainMenu/wallpaper.png", BACKGROUND = Shooter.IMAGES + "MainMenu/background.png";
 	private final static String FONT = Shooter.FONTS + "MainMenu/font.fnt";
+	private final static String MUSIC = Shooter.SOUNDS + "MainMenu/music.mp3";
+	private final static String CHOOSEN_SOUND = Shooter.SOUNDS + "MainMenu/gun.wav";
 	private final static int NB_MENUS = 4;
 
 	private Texture wallpaper;
 	private Table menu;
+	private Music music;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -36,12 +41,16 @@ public class MainMenuScreen extends StageScreen {
 		result.add(new AssetDescriptor(WALLPAPER, Texture.class));
 		result.add(new AssetDescriptor(BACKGROUND, Texture.class));
 		result.add(new AssetDescriptor(FONT, BitmapFont.class));
-
+		result.add(new AssetDescriptor(MUSIC, Music.class));
+		result.add(new AssetDescriptor(CHOOSEN_SOUND, Sound.class));
 		return result;
 	}
 
 	@Override
 	protected void onEndLoaded() {
+		music = (Music) App.getAsset(MUSIC);
+		music.play();
+		
 		float widthMenu = Gdx.graphics.getWidth() * 2 / 3;
 		float heightMenu = (Gdx.graphics.getHeight() / NB_MENUS) * 2 / 3;
 
@@ -62,7 +71,7 @@ public class MainMenuScreen extends StageScreen {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
 				app.setScreen(Shooter.LEVEL);
-				
+				haveChoosen();
 			}
 		});
 		menu.add(level).width(widthMenu).height(heightMenu);
@@ -73,6 +82,7 @@ public class MainMenuScreen extends StageScreen {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
 				System.out.println("mode illimité");
+				haveChoosen();
 			}
 		});
 		menu.add(unlimited).width(widthMenu).height(heightMenu);;
@@ -83,6 +93,7 @@ public class MainMenuScreen extends StageScreen {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
 				System.out.println("options");
+				haveChoosen();
 			}
 		});
 		menu.add(options).width(widthMenu).height(heightMenu);;
@@ -92,6 +103,7 @@ public class MainMenuScreen extends StageScreen {
 		exit.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
+				haveChoosen();
 				Gdx.app.exit();
 			}
 		});
@@ -120,5 +132,11 @@ public class MainMenuScreen extends StageScreen {
 
 		stage.addActor(new WallpaperActor(wallpaper));
 		stage.addActor(menu);
+	}
+	
+	private void haveChoosen() {
+		music.stop();
+		Sound sound = (Sound) App.getAsset(CHOOSEN_SOUND);
+		sound.play();
 	}
 }

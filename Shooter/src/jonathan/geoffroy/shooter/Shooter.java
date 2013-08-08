@@ -7,6 +7,7 @@ import jonathan.geoffroy.shooter.view.utils.App;
 public class Shooter extends App {
 	public final static String IMAGES = "data/img/";
 	public static final String MAPS = "data/maps/";
+	public static final String SOUNDS = "data/sounds/";
 	public static String FONTS = "data/fonts/";
 	public static int MAINMENU = 0, LEVEL = 1;
 	
