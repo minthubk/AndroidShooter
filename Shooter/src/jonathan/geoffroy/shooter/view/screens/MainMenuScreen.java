@@ -1,4 +1,4 @@
-package jonathan.geoffroy.shooter.view;
+package jonathan.geoffroy.shooter.view.screens;
 
 import java.util.ArrayList;
 
@@ -36,6 +36,7 @@ public class MainMenuScreen extends StageScreen {
 		result.add(new AssetDescriptor(WALLPAPER, Texture.class));
 		result.add(new AssetDescriptor(BACKGROUND, Texture.class));
 		result.add(new AssetDescriptor(FONT, BitmapFont.class));
+
 		return result;
 	}
 
@@ -60,7 +61,8 @@ public class MainMenuScreen extends StageScreen {
 		level.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
-				System.out.println("mode niveau");
+				app.setScreen(Shooter.LEVEL);
+				
 			}
 		});
 		menu.add(level).width(widthMenu).height(heightMenu);
