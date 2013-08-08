@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import jonathan.geoffroy.shooter.Shooter;
 import jonathan.geoffroy.shooter.model.Map;
 import jonathan.geoffroy.shooter.model.characters.Coord2F;
+import jonathan.geoffroy.shooter.model.characters.Character;
 import jonathan.geoffroy.shooter.view.screens.GameScreen;
 import jonathan.geoffroy.shooter.view.utils.App;
 
@@ -23,12 +24,28 @@ public class MapActor extends Actor {
 	private Map map;
 	private TextureRegion background;
 	private float terrainWidth, terrainHeight;
+	private int beginTerrainX, beginTerrainY;
+	private int endTerrainX, endTerrainY;
+	private float beginX, beginY;
 
 	public MapActor(GameScreen gameScreen) {
 		super();
 		this.map = gameScreen.getMap();
 		background = new TextureRegion(gameScreen.getBackground(), 800, 600);
 		assert(map != null);
+
+		computeCoords();
+	}
+
+	private void computeCoords() {
+		Character player = map.getPlayer();
+		Coord2F playerPos = player.getPosition();
+		beginTerrainX = (int) ((playerPos.x / terrainWidth) - Map.NB_TERRAINS_X / 2);
+		beginTerrainY = (int) (((playerPos.y - Gdx.graphics.getHeight()) / terrainHeight) - Map.NB_TERRAINS_Y / 2);
+		endTerrainX = (int) ((playerPos.x / terrainWidth) + Map.NB_TERRAINS_X / 2);
+		endTerrainY = (int) (((playerPos.y - Gdx.graphics.getHeight()) / terrainHeight) + Map.NB_TERRAINS_Y / 2);
+		beginX = 0;
+		beginY = Gdx.graphics.getHeight();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -52,64 +69,51 @@ public class MapActor extends Actor {
 	}
 
 	private void drawMap(SpriteBatch batch, float parentAlpha) {
-		Coord2F coordPlayer = map.getPlayer().getPosition();
-
-		int beginX = (int) (coordPlayer.x - getWidth() / 2);
-		int endX = (int) (coordPlayer.x + getWidth() / 2) + 1;
-		int beginY = (int) (coordPlayer.y - getHeight() / 2);
-		int endY = (int) (coordPlayer.y + getHeight() / 2) + 1;
-		int mapWidth = map.getWidth();
-		int mapHeight = map.getHeight();
-
 		Texture asset = null;
-		float x, y;
-		y = getY() + getHeight() - terrainHeight;
+		int mapHeight = map.getHeight();
+		int mapWidth = map.getWidth();
+		float x;
+		float y = beginY;
 
-		for(int i = beginY; i < endY; i++) {
-			if(i < 0 || i >= mapHeight) {
-				continue;
+		for(int i = beginTerrainY; i < endTerrainY; i++) {
+			if(i >= 0 && i < mapHeight) {
+				x = beginX;
+				for(int j = beginTerrainX; j < endTerrainX; j++) {
+					if(j >= 0 && j < mapWidth) {
+						switch(map.getTerrain(j, i)) {
+						case Map.NONE:
+							asset = null;
+							break;
+						case Map.BEGIN:
+							asset = (Texture) App.getAsset(BEGIN);
+							break;
+						case Map.END:
+							asset = (Texture) App.getAsset(END);
+							break;
+						case Map.BULLET_BOX:
+							asset = (Texture) App.getAsset(BULLET_BOX);
+							break;
+						case Map.LIFE:
+							asset = (Texture) App.getAsset(LIFE);
+							break;
+						case Map.LEFT_GROUND:
+							asset = (Texture) App.getAsset(LEFT_GROUND);
+							break;
+						case Map.GROUND:
+							asset = (Texture) App.getAsset(GROUND);
+							break;
+						case Map.RIGHT_GROUND:
+							asset = (Texture) App.getAsset(RIGHT_GROUND);
+							break;
+						}
+
+						if(asset != null) {
+							batch.draw(asset, x, y, terrainWidth, terrainHeight);
+						}
+					}
+					x += terrainWidth;
+				}
 			}
-
-			x = getX() - terrainWidth;
-			for(int j = beginX; j < endX; j++) {
-				if(j < 0 || j >= mapWidth) {
-					continue;
-				}
-
-				switch(map.getTerrain(j, i)) {
-				case Map.NONE:
-					asset = null;
-					break;
-				case Map.BEGIN:
-					asset = (Texture) App.getAsset(BEGIN);
-					break;
-				case Map.END:
-					asset = (Texture) App.getAsset(END);
-					break;
-				case Map.BULLET_BOX:
-					asset = (Texture) App.getAsset(BULLET_BOX);
-					break;
-				case Map.LIFE:
-					asset = (Texture) App.getAsset(LIFE);
-					break;
-				case Map.LEFT_GROUND:
-					asset = (Texture) App.getAsset(LEFT_GROUND);
-					break;
-				case Map.GROUND:
-					asset = (Texture) App.getAsset(GROUND);
-					break;
-				case Map.RIGHT_GROUND:
-					asset = (Texture) App.getAsset(RIGHT_GROUND);
-					break;
-				}
-
-				if(asset != null) {
-					batch.draw(asset, x, y, terrainWidth, terrainHeight);
-				}
-
-				x += terrainWidth;
-			}
-
 			y -= terrainHeight;
 		}
 	}
@@ -119,5 +123,14 @@ public class MapActor extends Actor {
 		super.setBounds(x, y, width, height);
 		terrainWidth = width / Map.NB_TERRAINS_X;
 		terrainHeight = height / Map.NB_TERRAINS_Y;
+		computeCoords();
+	}
+
+	public float getTerrainWidth() {
+		return terrainWidth;
+	}
+
+	public float getTerrainHeight() {
+		return terrainHeight;
 	}
 }

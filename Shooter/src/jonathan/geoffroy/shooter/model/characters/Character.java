@@ -1,13 +1,20 @@
 package jonathan.geoffroy.shooter.model.characters;
 
+import jonathan.geoffroy.shooter.model.Map;
+
+import com.badlogic.gdx.Gdx;
+
 
 public class Character {
-	public final static int X = 12, Y = 16;
-	
 	private Coord2F position;
 
 	public Character(int terrainX, int terrainY) {
-		position = new Coord2F();
+		float terrainWidth = Gdx.graphics.getWidth() / Map.NB_TERRAINS_X;
+		float terrainHeight = Gdx.graphics.getHeight() / Map.NB_TERRAINS_Y;
+		position = new Coord2F(
+				(terrainX) * terrainWidth,
+				(terrainY) * terrainHeight + Gdx.graphics.getHeight()
+				);
 	}
 	
 	public Coord2F getPosition() {
