@@ -4,48 +4,45 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
-import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Texture;
 
 import jonathan.geoffroy.shooter.Shooter;
 import jonathan.geoffroy.shooter.model.Map;
-import jonathan.geoffroy.shooter.view.actors.MapActor;
 import jonathan.geoffroy.shooter.view.utils.App;
-import jonathan.geoffroy.shooter.view.utils.StageScreen;
 
-public class LevelScreen extends StageScreen {
-	private static final String MUSIC = Shooter.SOUNDS + "Level/music.mp3";
-
+public class LevelScreen extends GameScreen {
 	private int level;
-	private Map map;
-	private MapActor mapActor;
 
 	public LevelScreen() {
 		super();
 
 		level = 1;
+		loadMap();
+	}
+
+	/**
+	 * Load the map, using level number
+	 * Kill the game if the map can't be load
+	 */
+	private void loadMap() {
 		try {
 			map = Map.load(level);
 		} catch (Exception e) {
 			e.printStackTrace();
+			Gdx.app.exit();
 		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<AssetDescriptor<Object>> getAssetDescriptors() {
-		ArrayList<AssetDescriptor<Object>> result = new ArrayList<AssetDescriptor<Object>>();
-		result.add(new AssetDescriptor(MUSIC, Music.class));
-		result.addAll(MapActor.getAssetDescriptors());
+		ArrayList<AssetDescriptor<Object>> result = super.getAssetDescriptors();
+		result.add(new AssetDescriptor(BACKGROUNDS + level + ".jpg", Texture.class));
 		return result;
 	}
 
 	@Override
-	protected void onEndLoaded() {
-		mapActor = new MapActor(map);
-		mapActor.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		stage.addActor(mapActor);
-
-		Music music = (Music) App.getAsset(MUSIC);
-		music.play();
+	public Texture getBackground() {
+		return (Texture) App.getAsset(BACKGROUNDS + level + ".jpg");
 	}
 }
