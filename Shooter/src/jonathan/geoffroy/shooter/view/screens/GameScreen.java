@@ -6,8 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import jonathan.geoffroy.shooter.Shooter;
 import jonathan.geoffroy.shooter.model.Map;
@@ -54,17 +52,6 @@ public abstract class GameScreen extends StageScreen {
 		joystick = new JoystickActor();
 		float joystickSize = Math.max(Gdx.graphics.getWidth(), Gdx.graphics.getWidth()) / 10;
 		joystick.setBounds(0, 0, joystickSize, joystickSize);
-		joystick.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				if(joystick.getKnobPercentX() >= 0) {
-					characterActor.move(CharacterActor.MOVE_RIGHT);
-				}
-				else {
-					characterActor.move(CharacterActor.MOVE_LEFT);
-				}
-			}
-		});
 		stage.addActor(joystick);
 
 		Gdx.input.setInputProcessor(stage);
@@ -81,6 +68,17 @@ public abstract class GameScreen extends StageScreen {
 	@Override
 	public void draw(float delta) {
 		mapActor.gravity();
+		
+		// joystick handling
+		float joyX = joystick.getKnobPercentX();
+		if(joyX > 0) {
+			if(mapActor.move(MapActor.MOVE_RIGHT))
+				characterActor.move(CharacterActor.MOVE_RIGHT);
+		}
+		else if (joyX < 0) {
+			if(mapActor.move(MapActor.MOVE_LEFT))
+				characterActor.move(CharacterActor.MOVE_LEFT);
+		}
 		super.draw(delta);
 	}
 }

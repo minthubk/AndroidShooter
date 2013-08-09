@@ -20,6 +20,8 @@ public class MapActor extends Actor {
 	private static String BEGIN = Shooter.IMAGES + "MapActor/begin.png", END = Shooter.IMAGES + "MapActor/end.png",
 			BULLET_BOX = Shooter.IMAGES + "MapActor/bulletBox.png", LIFE = Shooter.IMAGES + "MapActor/life.png",
 			LEFT_GROUND = Shooter.IMAGES + "MapActor/leftGround.png", GROUND = Shooter.IMAGES + "MapActor/ground.png", RIGHT_GROUND = Shooter.IMAGES + "MapActor/rightGround.png";
+	public static final int MOVE_LEFT = 0, MOVE_RIGHT = 1;
+
 	private Map map;
 	private TextureRegion background;
 	private float terrainWidth, terrainHeight;
@@ -27,6 +29,7 @@ public class MapActor extends Actor {
 	private int endTerrainX, endTerrainY;
 	private float beginX, beginY;
 	private float gravityWeight;
+	private float moveSpeed;
 
 	public MapActor(GameScreen gameScreen) {
 		super();
@@ -43,7 +46,15 @@ public class MapActor extends Actor {
 		beginTerrainX = (int) ((playerPos.x / terrainWidth) - Map.NB_TERRAINS_X / 2);
 		beginTerrainY = (int) (((playerPos.y - Gdx.graphics.getHeight()) / terrainHeight) - Map.NB_TERRAINS_Y / 2);
 		endTerrainX = (int) ((playerPos.x / terrainWidth) + Map.NB_TERRAINS_X / 2);
+		if(beginX != 0) 
+			endTerrainX ++;
+		
 		endTerrainY = (int) (((playerPos.y - Gdx.graphics.getHeight()) / terrainHeight) + Map.NB_TERRAINS_Y / 2);
+		if(beginY != 0)
+			endTerrainY ++;
+		
+		beginX =  - (playerPos.x % terrainWidth) ;
+		beginY = Gdx.graphics.getHeight() +  playerPos.y % terrainHeight;
 	}
 
 	public void gravity() {
@@ -62,6 +73,46 @@ public class MapActor extends Actor {
 		}
 	}
 
+	/**
+	 * Move the player on the map
+	 * @param moveType {MOVE_LEFT, MOVE_RIGHT}
+	 * @return true if the player can move
+	 */
+	public boolean move(int moveType) {
+		boolean haveMoved = false;
+		Coord2F playerPos = map.getPlayer().getPosition();
+		int terrainY = (int) ((playerPos.y - getHeight()) / terrainHeight);
+		int terrainX;
+		int terrainType;
+		switch(moveType) {
+		case MOVE_LEFT:
+			terrainX = (int) ( (playerPos.x - moveSpeed) / terrainWidth);
+			if(playerPos.x >= 0 && terrainX >= 0) {
+				terrainType = map.getTerrain(terrainX, terrainY);
+				if(terrainType == Map.NONE || terrainType == Map.BEGIN || terrainType == Map.BEGIN) {
+					playerPos.x -= moveSpeed;
+					computeCoords();
+					haveMoved = true;
+				}
+			}
+			break;
+
+		case MOVE_RIGHT:
+			terrainX = (int) ( (playerPos.x + terrainWidth / 2 + moveSpeed) / terrainWidth);
+			if(terrainX < map.getWidth()) {
+				terrainType = map.getTerrain(terrainX, terrainY);
+				if(terrainType == Map.NONE || terrainType == Map.BEGIN || terrainType == Map.BEGIN) {
+					playerPos.x += moveSpeed;
+					computeCoords();
+					haveMoved = true;
+				}
+			}
+			break;
+		}
+
+		return haveMoved;
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ArrayList<AssetDescriptor<Object>> getAssetDescriptors() {
 		ArrayList<AssetDescriptor<Object>> result = new ArrayList<AssetDescriptor<Object>>();
@@ -141,6 +192,7 @@ public class MapActor extends Actor {
 		beginX = getX();
 		beginY = getY() + getHeight();
 		gravityWeight = terrainHeight / 5;
+		moveSpeed = terrainWidth / 3;
 	}
 
 	public float getTerrainWidth() {
