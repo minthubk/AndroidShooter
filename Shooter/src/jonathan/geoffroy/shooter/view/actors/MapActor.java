@@ -20,13 +20,13 @@ public class MapActor extends Actor {
 	private static String BEGIN = Shooter.IMAGES + "MapActor/begin.png", END = Shooter.IMAGES + "MapActor/end.png",
 			BULLET_BOX = Shooter.IMAGES + "MapActor/bulletBox.png", LIFE = Shooter.IMAGES + "MapActor/life.png",
 			LEFT_GROUND = Shooter.IMAGES + "MapActor/leftGround.png", GROUND = Shooter.IMAGES + "MapActor/ground.png", RIGHT_GROUND = Shooter.IMAGES + "MapActor/rightGround.png";
-
 	private Map map;
 	private TextureRegion background;
 	private float terrainWidth, terrainHeight;
 	private int beginTerrainX, beginTerrainY;
 	private int endTerrainX, endTerrainY;
 	private float beginX, beginY;
+	private float gravityWeight;
 
 	public MapActor(GameScreen gameScreen) {
 		super();
@@ -44,8 +44,22 @@ public class MapActor extends Actor {
 		beginTerrainY = (int) (((playerPos.y - Gdx.graphics.getHeight()) / terrainHeight) - Map.NB_TERRAINS_Y / 2);
 		endTerrainX = (int) ((playerPos.x / terrainWidth) + Map.NB_TERRAINS_X / 2);
 		endTerrainY = (int) (((playerPos.y - Gdx.graphics.getHeight()) / terrainHeight) + Map.NB_TERRAINS_Y / 2);
-		beginX = 0;
-		beginY = Gdx.graphics.getHeight();
+	}
+
+	public void gravity() {
+		Coord2F playerPos = map.getPlayer().getPosition();
+		int terrainY = (int) ((playerPos.y - getHeight()) / terrainHeight) + 1;
+		int terrainX = (int) (playerPos.x / terrainWidth);
+		int terrainType = map.getTerrain(terrainX, terrainY);
+
+		if(terrainType == Map.NONE || terrainType == Map.BEGIN) {
+			playerPos.y += gravityWeight;
+			beginY = Gdx.graphics.getHeight() + ((beginY + gravityWeight) % terrainWidth);
+			if(beginY % terrainHeight == 0) {
+				beginTerrainY += 1;
+				endTerrainY += 1;
+			}
+		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -124,6 +138,9 @@ public class MapActor extends Actor {
 		terrainWidth = width / Map.NB_TERRAINS_X;
 		terrainHeight = height / Map.NB_TERRAINS_Y;
 		computeCoords();
+		beginX = getX();
+		beginY = getY() + getHeight();
+		gravityWeight = terrainHeight / 5;
 	}
 
 	public float getTerrainWidth() {

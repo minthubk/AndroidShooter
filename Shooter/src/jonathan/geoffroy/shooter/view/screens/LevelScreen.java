@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.graphics.Texture;
 
-import jonathan.geoffroy.shooter.Shooter;
 import jonathan.geoffroy.shooter.model.Map;
 import jonathan.geoffroy.shooter.view.utils.App;
 

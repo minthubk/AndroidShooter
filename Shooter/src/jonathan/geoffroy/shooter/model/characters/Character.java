@@ -12,8 +12,8 @@ public class Character {
 		float terrainWidth = Gdx.graphics.getWidth() / Map.NB_TERRAINS_X;
 		float terrainHeight = Gdx.graphics.getHeight() / Map.NB_TERRAINS_Y;
 		position = new Coord2F(
-				(terrainX) * terrainWidth,
-				(terrainY) * terrainHeight + Gdx.graphics.getHeight()
+				terrainX * terrainWidth,
+				terrainY * terrainHeight + Gdx.graphics.getHeight()
 				);
 	}
 	
