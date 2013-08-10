@@ -5,18 +5,21 @@ import java.util.ArrayList;
 import jonathan.geoffroy.shooter.Shooter;
 import jonathan.geoffroy.shooter.view.utils.App;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class CharacterActor extends Actor {
+	private static final float TIME_TO_CHANGE_SPRITE = 0.15f;
 	private static final String IMAGES = Shooter.IMAGES + "characters/player/";
 	private static final int LEFT = 0, RIGHT = 1, LEFT_1 = 2, LEFT_2 = 3, RIGHT_1 = 4, RIGHT_2 = 5, LEFT_SHOOT = 6, RIGHT_SHOOT = 7;
 	public static final int MOVE_LEFT = 0, MOVE_RIGHT = 1, SHOOT = 2, STOP = 3;
 	private int state;
 	private ArrayList<Texture> textures;
 	private Texture stateTexture;
+	float timer;
 
 	public CharacterActor() {
 		textures = new ArrayList<Texture>();
@@ -52,20 +55,37 @@ public class CharacterActor extends Actor {
 		case MOVE_LEFT:
 			switch(state) {
 			case LEFT_1:
-				state = LEFT_2;
+				if(timer > TIME_TO_CHANGE_SPRITE) {
+					state = LEFT_2;
+					timer = 0;
+				}
+				break;
+			case LEFT_2:
+				if(timer > TIME_TO_CHANGE_SPRITE) {
+					state = LEFT_1;
+					timer = 0;
+				}
 				break;
 			default:
 				state = LEFT_1;
+				break;
 			}
 			break;
 		case MOVE_RIGHT:
 			switch(state) {
 			case RIGHT_1:
-				state = RIGHT_2;
+				if(timer > TIME_TO_CHANGE_SPRITE) {
+					state = RIGHT_2;
+					timer = 0;
+				}
+			case RIGHT_2:
+				if(timer > TIME_TO_CHANGE_SPRITE) {
+					state = RIGHT_1;
+					timer = 0;
+				}
 				break;
 			default:
 				state = RIGHT_1;
-
 			}
 			break;
 		case STOP:
@@ -91,5 +111,11 @@ public class CharacterActor extends Actor {
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);
 		batch.draw(stateTexture, getX(), getY(), getWidth(), getHeight());
+		if (state == LEFT || state == RIGHT) {
+			timer = 0;
+		}
+		else {
+			timer += Gdx.graphics.getDeltaTime();
+		}
 	}
 }
