@@ -12,13 +12,23 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class CharacterActor extends Actor {
 	private static final String IMAGES = Shooter.IMAGES + "characters/player/";
-	private static final int LEFT = 0, RIGHT = 1, MOVE_LEFT_1 = 2, MOVE_LEFT_2 = 3, MOVE_RIGHT_1 = 4, MOVE_RIGHT_2 = 5, LEFT_SHOOT = 6, RIGHT_SHOOT = 7;
-	public static final int MOVE_LEFT = 0, MOVE_RIGHT = 1, SHOOT = 2;
+	private static final int LEFT = 0, RIGHT = 1, LEFT_1 = 2, LEFT_2 = 3, RIGHT_1 = 4, RIGHT_2 = 5, LEFT_SHOOT = 6, RIGHT_SHOOT = 7;
+	public static final int MOVE_LEFT = 0, MOVE_RIGHT = 1, SHOOT = 2, STOP = 3;
 	private int state;
-	private Texture texture;
+	private ArrayList<Texture> textures;
+	private Texture stateTexture;
 
 	public CharacterActor() {
-		move(MOVE_LEFT);
+		textures = new ArrayList<Texture>();
+		textures.add((Texture)App.getAsset(IMAGES + "left.png"));
+		textures.add((Texture)App.getAsset(IMAGES + "right.png"));
+		textures.add((Texture)App.getAsset(IMAGES + "left1.png"));
+		textures.add((Texture)App.getAsset(IMAGES + "left2.png"));
+		textures.add((Texture)App.getAsset(IMAGES + "right1.png"));
+		textures.add((Texture)App.getAsset(IMAGES + "right2.png"));
+		//		textures.add((Texture)App.getAsset("player/leftShoot.png"));
+		//		textures.add((Texture)App.getAsset("player/rightShoot.png"));
+		move(STOP);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -26,6 +36,10 @@ public class CharacterActor extends Actor {
 		ArrayList<AssetDescriptor<Object>> result = new ArrayList<AssetDescriptor<Object>>();
 		result.add(new AssetDescriptor(IMAGES + "left.png", Texture.class));
 		result.add(new AssetDescriptor(IMAGES + "right.png", Texture.class));
+		result.add(new AssetDescriptor(IMAGES + "left1.png", Texture.class));
+		result.add(new AssetDescriptor(IMAGES + "left2.png", Texture.class));
+		result.add(new AssetDescriptor(IMAGES + "right1.png", Texture.class));
+		result.add(new AssetDescriptor(IMAGES + "right2.png", Texture.class));
 		return result;
 	}
 
@@ -34,27 +48,48 @@ public class CharacterActor extends Actor {
 	 * @param typeMove the Character's last movement {MOVE_LEFT, MOVE_RIGHT, SHOOT}
 	 */
 	public void move(int typeMove) {
-		String asset = null;
 		switch(typeMove) {
 		case MOVE_LEFT:
-			state = LEFT;
-			asset = "left";
+			switch(state) {
+			case LEFT_1:
+				state = LEFT_2;
+				break;
+			default:
+				state = LEFT_1;
+			}
 			break;
 		case MOVE_RIGHT:
-			state = RIGHT;
-			asset = "right";
+			switch(state) {
+			case RIGHT_1:
+				state = RIGHT_2;
+				break;
+			default:
+				state = RIGHT_1;
+
+			}
+			break;
+		case STOP:
+			switch(state) {
+			case LEFT:
+			case LEFT_1:
+			case LEFT_2:
+			case LEFT_SHOOT:
+				state = LEFT;
+				break;
+			default:
+				state = RIGHT;
+
+			}
 			break;
 		default:
-			System.out.println("ERROR: unrecognized movement");
+			System.out.println("ERROR: unrecognized movement: " + typeMove);
 		}
-		texture = (Texture) App.getAsset(IMAGES + asset + ".png");
+		stateTexture = textures.get(state);
 	}
 
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
 		super.draw(batch, parentAlpha);
-		batch.draw(texture, getX(), getY(), getWidth(), getHeight());
+		batch.draw(stateTexture, getX(), getY(), getWidth(), getHeight());
 	}
-
-
 }

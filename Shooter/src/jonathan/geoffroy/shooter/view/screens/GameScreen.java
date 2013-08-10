@@ -79,6 +79,10 @@ public abstract class GameScreen extends StageScreen {
 			if(mapActor.move(MapActor.MOVE_LEFT))
 				characterActor.move(CharacterActor.MOVE_LEFT);
 		}
+		else {
+			characterActor.move(CharacterActor.STOP);
+		}
+		
 		super.draw(delta);
 	}
 }
