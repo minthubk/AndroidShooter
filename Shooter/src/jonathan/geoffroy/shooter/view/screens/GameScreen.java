@@ -67,8 +67,6 @@ public abstract class GameScreen extends StageScreen {
 
 	@Override
 	public void draw(float delta) {
-		mapActor.gravity();
-		
 		// joystick handling
 		float joyX = joystick.getKnobPercentX();
 		if(joyX > 0) {
@@ -81,6 +79,11 @@ public abstract class GameScreen extends StageScreen {
 		}
 		else {
 			characterActor.move(CharacterActor.STOP);
+		}
+		
+		float joyY = joystick.getKnobPercentY();
+		if(joyY > 0.8f) {
+			mapActor.move(MapActor.MOVE_JUMP);
 		}
 		
 		super.draw(delta);
