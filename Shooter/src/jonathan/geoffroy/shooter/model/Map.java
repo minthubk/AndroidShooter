@@ -1,10 +1,14 @@
 package jonathan.geoffroy.shooter.model;
 
+import java.util.ArrayList;
+
 import jonathan.geoffroy.shooter.Shooter;
 import jonathan.geoffroy.shooter.model.characters.Character;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.utils.Pool;
 
 public class Map {
 	public final static int NONE = 0, LEFT_GROUND = 1, GROUND = 2, RIGHT_GROUND = 3, LIFE = 4, BULLET_BOX = 5, BEGIN = 6, END = 7;
@@ -13,10 +17,19 @@ public class Map {
 
 	private int[][] terrains;
 	private Character player;
+	private ArrayList<Bullet> bullets;
+	private Pool<Bullet> bulletPool;
 
 	public static Map load(int mapNumber) throws Exception {
 		Map loadedMap = new Map();
-
+		loadedMap.setBullets(new ArrayList<Bullet>());
+		loadedMap.bulletPool = new Pool<Bullet>() {
+			@Override
+			protected Bullet newObject() {
+				return new Bullet();
+			}
+		};
+		
 		FileHandle file = Gdx.files.internal(Shooter.MAPS + mapNumber + ".png");
 		Pixmap img = new Pixmap(file);
 		int width = img.getWidth();
@@ -89,8 +102,32 @@ public class Map {
 	}
 
 	public int getTerrain(int x, int y) {
-		assert(x >= 0 && x < getWidth());
-		assert(y >= 0 && y < getHeight());
-		return terrains[y][x];
+		if(y >= 0 && y < terrains.length && x >= 0 && x < terrains[y].length)
+			return terrains[y][x];
+		return NONE;
+	}
+
+	public ArrayList<Bullet> getBullets() {
+		return bullets;
+	}
+
+	public void setBullets(ArrayList<Bullet> bullets) {
+		this.bullets = bullets;
+	}
+	
+	public Bullet obtainBullet() {
+		Bullet bullet = bulletPool.obtain();
+		bullets.add(bullet);
+		return bullet;
+	}
+	
+	public void freeBullet(int index) {
+		Bullet bullet = bullets.remove(index);
+		bulletPool.free(bullet);
+	}
+	
+	public void freeBullet(Bullet bullet) {
+		bulletPool.free(bullet);
+		bullets.remove(bullet);
 	}
 }
